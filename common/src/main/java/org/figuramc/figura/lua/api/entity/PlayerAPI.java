@@ -88,7 +88,7 @@ public class PlayerAPI extends LivingEntityAPI<Player> {
     @LuaMethodDoc("player.get_model_type")
     public String getModelType() {
         checkEntity();
-        return (checkPlayerInfo() ? playerInfo.getModelName() : DefaultPlayerSkin.getSkinModelName(entity.getUUID())).toUpperCase(Locale.US);
+        return (checkPlayerInfo() ? playerInfo.getSkin().model().id().toUpperCase(Locale.US) : DefaultPlayerSkin.get(entity.getUUID()).model().id().toUpperCase(Locale.US));
     }
 
     @LuaWhitelist
