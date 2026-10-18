@@ -13,17 +13,13 @@ repositories {
 }
 
 dependencies {
-    mappings loom.layered {
-        officialMojangMappings()
-    }
-
     // Libraries
     implementation("com.github.FiguraMC.luaj:luaj-core:$luaj-figura")
     implementation("com.github.FiguraMC.luaj:luaj-jse:$luaj-figura")
     implementation("com.neovisionaries:nv-websocket-client:$nv_websocket")
 
     // Mods
-    modCompileOnly ("software.bernie.geckolib:geckolib-fabric-$geckolib_version") {
+    compileOnly ("software.bernie.geckolib:geckolib-fabric-$geckolib_version") {
         exclude group: "net.fabricmc"
     }
 
@@ -31,23 +27,23 @@ dependencies {
 
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
     // Test compile only is used to mount sources on an IDE without overriding vanilla classes with Optifine's
     testCompileOnly fileTree(dir: "$rootProject.projectDir/libs", include: '*.jar')
 
     // Mods
-    modCompileOnly "maven.modrinth:iris:$iris"
-    modCompileOnly "maven.modrinth:immediatelyfast:$immediately_fast"
+    compileOnly "maven.modrinth:iris:$iris"
+    compileOnly "maven.modrinth:immediatelyfast:$immediately_fast"
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId = "${project.archivesBaseName}-common-intermediary"
+            artifactId = "${project.archivesBaseName}-common"
             version = project.version
-            artifact(remapJar) {
-                builtBy remapJar
+            artifact(jar) {
+                builtBy jar
                 classifier ''
             }
             artifact(sourcesJar) {

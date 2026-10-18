@@ -150,8 +150,8 @@ public class Avatar {
     private Avatar(UUID owner, EntityType<?> type, String name) {
         this.owner = owner;
         this.entityType = type;
-        this.isHost = type == EntityType.PLAYER && FiguraMod.isLocal(owner);
-        this.permissions = type == EntityType.PLAYER ? PermissionManager.get(owner) : PermissionManager.getMobPermissions(owner);
+        this.isHost = type == net.minecraft.world.entity.EntityTypes.PLAYER && FiguraMod.isLocal(owner);
+        this.permissions = type == net.minecraft.world.entity.EntityTypes.PLAYER ? PermissionManager.get(owner) : PermissionManager.getMobPermissions(owner);
         this.complexity = new Instructions(permissions.get(Permissions.COMPLEXITY));
         this.init = new Instructions(permissions.get(Permissions.INIT_INST));
         this.render = new Instructions(permissions.get(Permissions.RENDER_INST));
@@ -171,7 +171,7 @@ public class Avatar {
     }
 
     public Avatar(UUID owner) {
-        this(owner, EntityType.PLAYER, EntityUtils.getNameForUUID(owner));
+        this(owner, net.minecraft.world.entity.EntityTypes.PLAYER, EntityUtils.getNameForUUID(owner));
     }
 
     public Avatar(Entity entity) {

@@ -323,7 +323,7 @@ public class HostAPI {
     )
     public HostAPI swingArm(boolean offhand) {
         if (isHost() && this.minecraft.player != null)
-            this.minecraft.player.swing(offhand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+            this.minecraft.player.swing(offhand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
         return this;
     }
 
@@ -600,7 +600,7 @@ public class HostAPI {
     public boolean isJumping() {
         LocalPlayer player = this.minecraft.player;
         if (isHost() && player != null)
-            return ((LivingEntityAccessor) player).isJumping();
+            return player.isJumping();
         return false;
     }
 

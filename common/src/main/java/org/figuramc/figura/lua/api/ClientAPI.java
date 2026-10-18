@@ -9,10 +9,10 @@ import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.resources.model.AtlasManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.UUIDUtil;
@@ -163,19 +163,19 @@ public class ClientAPI {
     @LuaWhitelist
     @LuaMethodDoc("client.get_chunk_statistics")
     public static String getChunkStatistics() {
-        return Minecraft.getInstance().levelRenderer.getSectionStatistics();
+        return Minecraft.getInstance().levelExtractor.sectionStatistics();
     }
 
     @LuaWhitelist
     @LuaMethodDoc("client.get_entity_statistics")
     public static String getEntityStatistics() {
-        return Minecraft.getInstance().levelRenderer.getEntityStatistics();
+        return Minecraft.getInstance().levelExtractor.entityStatistics();
     }
 
     @LuaWhitelist
     @LuaMethodDoc("client.get_sound_statistics")
     public static String getSoundStatistics() {
-        return Minecraft.getInstance().getSoundManager().getDebugString();
+        return Minecraft.getInstance().getSoundManager().getChannelDebugString();
     }
 
     @LuaWhitelist
@@ -627,10 +627,10 @@ public class ClientAPI {
         // sidebars for different team colours
         assert Minecraft.getInstance().player != null;
         PlayerTeam playerTeam = scoreboard.getPlayersTeam(Minecraft.getInstance().player.getScoreboardName());
-        if (playerTeam != null) {
-            int id = playerTeam.getColor().getId();
+        if (playerTeam != null && playerTeam.getColor().isPresent()) {
+            int id = playerTeam.getColor().get().ordinal();
             if (id >= 0) {
-                objectives.put("sidebar_team_" + playerTeam.getColor().getName(), scoreboard.getDisplayObjective(DisplaySlot.BY_ID.apply(3 + id)));
+                objectives.put("sidebar_team_" + playerTeam.getColor().get().getSerializedName(), scoreboard.getDisplayObjective(DisplaySlot.BY_ID.apply(3 + id)));
             }
         }
 
