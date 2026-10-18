@@ -23,7 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -41,10 +43,18 @@ public class GuiRendererMixin {
         figura$paperDollRenderer = new FiguraGuiEntityRenderer(Minecraft.getInstance().getEntityRenderDispatcher());
     }
 
-    @Inject(method = "preparePictureInPictureState(Lnet/minecraft/client/renderer/state/gui/pip/PictureInPictureRenderState;I)V", at = @At("HEAD"), cancellable = true)
+    @Group(name = "figura$paperDoll", min = 1)
+    @Inject(method = "preparePictureInPictureState(Lnet/minecraft/client/renderer/state/gui/pip/PictureInPictureRenderState;I)V", at = @At("HEAD"), cancellable = true, require = 0)
     private <T extends PictureInPictureRenderState> void renderPaperDoll(T pictureInPictureRenderState, int i, CallbackInfo ci) {
         if (figura$preparePaperDoll(pictureInPictureRenderState, i))
             ci.cancel();
+    }
+
+    @Group(name = "figura$paperDoll", min = 1)
+    @Inject(method = "preparePictureInPictureState(Lnet/minecraft/client/renderer/state/gui/pip/PictureInPictureRenderState;IZ)Z", at = @At("HEAD"), cancellable = true, require = 0)
+    private <T extends PictureInPictureRenderState> void renderPaperDollNeoForge(T state, int scale, boolean firstPass, CallbackInfoReturnable<Boolean> cir) {
+        if (figura$preparePaperDoll(state, scale))
+            cir.setReturnValue(true);
     }
 
     @Unique

@@ -83,6 +83,9 @@ public abstract class GameRendererMixin implements GameRendererAccessor {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/render/GuiRenderer;<init>(Lnet/minecraft/client/renderer/state/gui/GuiRenderState;Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;Ljava/util/List;)V"))
     private List<PictureInPictureRenderer<?>> addPortraitRenderer(List<PictureInPictureRenderer<?>> list) {
+        // NeoForge registers renderer factories through its own event.
+        if (org.figuramc.figura.utils.PlatformUtils.isModLoaded("neoforge"))
+            return list;
         List<PictureInPictureRenderer<?>> newList = new ArrayList<>(list);
         newList.add(new FiguraPortraitRenderer());
         newList.add(new org.figuramc.figura.gui.FiguraGui.HudRenderer());
