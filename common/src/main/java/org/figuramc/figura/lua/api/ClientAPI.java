@@ -196,10 +196,10 @@ public class ClientAPI {
     @LuaWhitelist
     @LuaMethodDoc("client.get_current_effect")
     public static String getCurrentEffect() {
-        if (Minecraft.getInstance().gameRenderer.currentPostEffect() == null)
+        if (Minecraft.getInstance().gameRenderer.spectatedEntityPostEffect() == null)
             return null;
 
-        return Minecraft.getInstance().gameRenderer.currentPostEffect().toString();
+        return Minecraft.getInstance().gameRenderer.spectatedEntityPostEffect().toString();
     }
 
     @LuaWhitelist
@@ -286,14 +286,14 @@ public class ClientAPI {
     @LuaWhitelist
     @LuaMethodDoc("client.get_camera_pos")
     public static FiguraVec3 getCameraPos() {
-        Vec3 pos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        Vec3 pos = Minecraft.getInstance().gameRenderer.mainCamera().position();
         return FiguraVec3.fromVec3(pos);
     }
 
     @LuaWhitelist
     @LuaMethodDoc("client.get_camera_rot")
     public static FiguraVec3 getCameraRot() {
-        var quaternion = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
+        var quaternion = Minecraft.getInstance().gameRenderer.mainCamera().rotation();
         Vector3f vec = new Vector3f();
         quaternion.getEulerAnglesYXZ(vec);
         double f = 180d / Math.PI;
@@ -312,7 +312,7 @@ public class ClientAPI {
     @LuaWhitelist
     @LuaMethodDoc("client.get_camera_dir")
     public static FiguraVec3 getCameraDir() {
-        return FiguraVec3.fromVec3f(Minecraft.getInstance().gameRenderer.getMainCamera().forwardVector());
+        return FiguraVec3.fromVec3f(Minecraft.getInstance().gameRenderer.mainCamera().forwardVector());
     }
 
     @LuaWhitelist

@@ -1,11 +1,11 @@
 package org.figuramc.figura.lua.api;
 
-import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.renderpearl.api.buffers.GpuBuffer;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.CommandEncoder;
+import com.mojang.renderpearl.api.commands.CommandEncoder;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.GpuTexture;
+import com.mojang.renderpearl.api.textures.GpuTexture;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
@@ -511,27 +511,52 @@ public class HostAPI {
             return null;
 
         // manually recreate screenshot logic to get around the main thread screenshot saving
-        RenderTarget renderTarget = this.minecraft.getMainRenderTarget();
+        RenderTarget renderTarget = this.minecraft.gameRenderer.mainRenderTarget();
         GpuTexture gpuTexture = renderTarget.getColorTexture();
         int width = renderTarget.width;
         int height = renderTarget.height;
+        var textureMap = owner.renderer.customTextures;
         NativeImage nativeImage = new NativeImage(width, height, false);
-        GpuBuffer gpuBuffer = RenderSystem.getDevice()
-                .createBuffer(() -> "Figura Screenshot buffer", 9, width * height * gpuTexture.getFormat().pixelSize());
-        CommandEncoder commandEncoder = RenderSystem.getDevice().createCommandEncoder();
-        RenderSystem.getDevice().createCommandEncoder().copyTextureToBuffer(gpuTexture, gpuBuffer, 0, () -> {
-            try (GpuBuffer.MappedView readView = commandEncoder.mapBuffer(gpuBuffer, true, false)) {
-                for (int k = 0; k < height; k++) {
-                    for (int l = 0; l < width; l++) {
-                        int m = readView.data().getInt((l + k * width) * gpuTexture.getFormat().pixelSize());
-                        nativeImage.setPixelABGR(l, height - k - 1, m | 0xFF000000);
+        GpuBuffer gpuBuffer = null;
+        FiguraTexture result = null;
+        boolean scheduled = false;
+        try {
+            gpuBuffer = RenderSystem.getDevice().createBuffer(() -> "Figura Screenshot buffer", 9, (long) width * height * gpuTexture.getFormat().blockSize());
+            result = owner.luaRuntime.texture.register(name, nativeImage, true);
+            GpuBuffer readBuffer = gpuBuffer;
+            FiguraTexture texture = result;
+            CommandEncoder commandEncoder = RenderSystem.getDevice().createCommandEncoder();
+            commandEncoder.copyTextureToBuffer(gpuTexture, readBuffer, 0, () -> {
+                try {
+                    if (nativeImage.isClosed())
+                        return;
+                    try (com.mojang.renderpearl.api.buffers.GpuBufferSlice.MappedView readView = readBuffer.map(true, false)) {
+                        for (int k = 0; k < height; k++) {
+                            for (int l = 0; l < width; l++) {
+                                int m = readView.data().getInt((l + k * width) * gpuTexture.getFormat().blockSize());
+                                nativeImage.setPixelABGR(l, height - k - 1, m | 0xFF000000);
+                            }
+                        }
                     }
+                    texture.update();
+                } finally {
+                    readBuffer.close();
                 }
-
+            }, 0);
+            scheduled = true;
+            return texture;
+        } finally {
+            if (!scheduled) {
+                if (gpuBuffer != null)
+                    gpuBuffer.close();
+                if (result != null) {
+                    textureMap.remove(name, result);
+                    result.close();
+                } else {
+                    nativeImage.close();
+                }
             }
-            gpuBuffer.close();
-        }, 0);
-        return owner.luaRuntime.texture.register(name, nativeImage, true);
+        }
     }
 
     @LuaWhitelist
