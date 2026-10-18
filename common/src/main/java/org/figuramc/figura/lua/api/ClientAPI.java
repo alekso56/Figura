@@ -235,7 +235,7 @@ public class ClientAPI {
     @LuaWhitelist
     @LuaMethodDoc("client.is_hud_enabled")
     public static boolean isHudEnabled() {
-        return Minecraft.renderNames();
+        return !Minecraft.getInstance().gui.hud.isHidden();
     }
 
     @LuaWhitelist
@@ -596,21 +596,21 @@ public class ClientAPI {
     @LuaWhitelist
     @LuaMethodDoc("client.get_actionbar")
     public static Component getActionbar() {
-        Gui gui = Minecraft.getInstance().gui;
+        Hud gui = Minecraft.getInstance().gui.hud;
         return ((GuiAccessor) gui).getActionbarTime() > 0 ? ((GuiAccessor) gui).getActionbar() : null;
     }
 
     @LuaWhitelist
     @LuaMethodDoc("client.get_title")
     public static Component getTitle() {
-        Gui gui = Minecraft.getInstance().gui;
+        Hud gui = Minecraft.getInstance().gui.hud;
         return ((GuiAccessor) gui).getTime() > 0 ? ((GuiAccessor) gui).getTitle() : null;
     }
 
     @LuaWhitelist
     @LuaMethodDoc("client.get_subtitle")
     public static Component getSubtitle() {
-        Gui gui = Minecraft.getInstance().gui;
+        Hud gui = Minecraft.getInstance().gui.hud;
         return ((GuiAccessor) gui).getTime() > 0 ? ((GuiAccessor) gui).getSubtitle() : null;
     }
 
@@ -694,7 +694,7 @@ public class ClientAPI {
     @LuaMethodDoc("client.get_tab_list")
     public static Map<String, Object> getTabList() {
         Map<String, Object> map = new HashMap<>();
-        PlayerTabOverlayAccessor accessor = (PlayerTabOverlayAccessor) Minecraft.getInstance().gui.getTabList();
+        PlayerTabOverlayAccessor accessor = (PlayerTabOverlayAccessor) Minecraft.getInstance().gui.hud.getTabList();
 
         // header
         Component header = accessor.getHeader();

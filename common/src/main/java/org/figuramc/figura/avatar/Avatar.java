@@ -9,7 +9,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -777,7 +777,7 @@ public class Avatar {
         return comp > 0 && luaRuntime != null && !luaRuntime.vanilla_model.HEAD.checkVisible();
     }
 
-    public boolean submitPortraitDraw(GuiGraphics gui, Identifier fallback, int x, int y, int size, float modelScale, boolean upsideDown) {
+    public boolean submitPortraitDraw(GuiGraphicsExtractor gui, Identifier fallback, int x, int y, int size, float modelScale, boolean upsideDown) {
         if (!Configs.AVATAR_PORTRAIT.value || renderer == null || !loaded)
             return false;
 
@@ -808,7 +808,7 @@ public class Avatar {
 
         FiguraPortraitRenderState state = new FiguraPortraitRenderState(this, fallback, modelScale, upsideDown, x1, y1, x2, y2, size, ((GuiGraphicsAccessor)gui).figura$getScissorStack().peek());
         gui.fill(x1, y1, x2, y2, -1);
-        ((GuiGraphicsAccessor)gui).figura$getRenderState().submitPicturesInPictureState(state);
+        ((GuiGraphicsAccessor)gui).figura$getRenderState().addPicturesInPictureState(state);
         gui.pose().popMatrix();
 
         gui.disableScissor();
