@@ -19,7 +19,7 @@ dependencies {
     implementation("com.neovisionaries:nv-websocket-client:$nv_websocket")
 
     // Mods
-    compileOnly ("software.bernie.geckolib:geckolib-fabric-$geckolib_version") {
+    compileOnly ("com.geckolib:geckolib-fabric-$geckolib_version") {
         exclude group: "net.fabricmc"
     }
 

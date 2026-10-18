@@ -20,6 +20,7 @@ subprojects {
 			url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
 			content {
 				includeGroupByRegex("software\\.bernie.*")
+				includeGroup("com.geckolib")
 				includeGroup("com.eliotlash.mclib")
 			}
 		}

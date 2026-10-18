@@ -57,7 +57,7 @@ dependencies {
         compileOnly("maven.modrinth:modmenu:$modmenu")
     }
     if (rootProject.run_with_geckolib == "true")
-        runtimeOnly("software.bernie.geckolib:geckolib-fabric-$geckolib_version")
+        runtimeOnly("com.geckolib:geckolib-fabric-$geckolib_version")
 
 
     common(project(":common")) { transitive false }
