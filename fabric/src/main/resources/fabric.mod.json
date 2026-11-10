@@ -32,6 +32,7 @@
     "figura.mixins.json",
     "figura-common.mixins.json"
   ],
+  "accessWidener": "figura.accesswidener",
   "depends": {
     "java": ">=${java_version}",
     "minecraft": "${minecraft_version}",
